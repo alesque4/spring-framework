@@ -1,8 +1,14 @@
 package com.training.springcore;
 
+import com.training.springcore.model.Captor;
+import com.training.springcore.model.MeasureStep;
+import com.training.springcore.service.CaptorService;
 import com.training.springcore.service.SiteService;
+import com.training.springcore.service.measure.MeasureService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.time.Instant;
 
 public class BigCorpApplication {
 
@@ -12,9 +18,9 @@ public class BigCorpApplication {
     }
 
     public void run(){
-        /*Les beans chargés sont des singletons par défaut
-            Avec @Scope("prototype") dans la classe de config, ce sont des prototypes
-            Avec @Lazy, l'instance est créée quand on en a besoin
+        /*
+            Les annotations @Scope et @Lazy fonctionnent de la même manière
+            avec la configuration automatique
          */
         ApplicationContext context = new
             AnnotationConfigApplicationContext(BigCorpApplicationConfig.class);
@@ -23,5 +29,7 @@ public class BigCorpApplication {
         System.out.println(siteService.findById("siteA"));
         SiteService siteService2 = context.getBean(SiteService.class);
         System.out.println(siteService2.findById("siteA"));
+
+
     }
 }

@@ -1,6 +1,7 @@
 package com.training.springcore.service;
 
 import com.training.springcore.model.Captor;
+import com.training.springcore.model.PowerSource;
 import com.training.springcore.model.Site;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class SiteServiceImplTest {
     public void findById(){
         // Initialisation
         String siteId = "siteId";
-        Set<Captor> expectedCpators = Collections.singleton(new Captor("Capteur A"));
+        Set<Captor> expectedCpators = Collections.singleton(new Captor("Capteur A", PowerSource.FIXED));
         Mockito.when(captorService.findBySite(siteId)).thenReturn(expectedCpators);
 
         // Appel du SUT
