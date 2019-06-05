@@ -1,14 +1,8 @@
 package com.training.springcore;
 
-import com.training.springcore.model.Captor;
-import com.training.springcore.model.MeasureStep;
-import com.training.springcore.service.CaptorService;
 import com.training.springcore.service.SiteService;
-import com.training.springcore.service.measure.MeasureService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.time.Instant;
 
 public class BigCorpApplication {
 
@@ -30,6 +24,7 @@ public class BigCorpApplication {
         SiteService siteService2 = context.getBean(SiteService.class);
         System.out.println(siteService2.findById("siteA"));
 
+        siteService.readFile("classpath:lorem.txt");
 
     }
 }
