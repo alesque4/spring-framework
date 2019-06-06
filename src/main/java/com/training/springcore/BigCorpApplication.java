@@ -2,7 +2,7 @@ package com.training.springcore;
 
 import com.training.springcore.model.ApplicationInfo;
 import com.training.springcore.config.BigCorpApplicationConfig;
-import org.springframework.core.env.Environment;
+import com.training.springcore.service.SiteService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -27,6 +27,7 @@ public class BigCorpApplication {
         System.out.println(applicationInfo.getEmails().stream().collect(Collectors.joining(", ")));
         System.out.println("==========================================================");
 
-
+        SiteService siteService = context.getBean(SiteService.class);
+        System.out.println(siteService.findById("siteA"));
     }
 }

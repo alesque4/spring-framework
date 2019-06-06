@@ -1,5 +1,6 @@
 package com.training.springcore.service;
 
+import com.training.springcore.annotations.Monitored;
 import com.training.springcore.model.Captor;
 import com.training.springcore.model.PowerSource;
 import com.training.springcore.service.measure.MeasureService;
@@ -20,6 +21,7 @@ public class CaptorServiceImpl implements CaptorService{
         this.measureService = measureService;
     }
 
+    @Monitored
     @Override
     public Set<Captor> findBySite(String siteId) {
         Set<Captor> captors = new HashSet<>();
