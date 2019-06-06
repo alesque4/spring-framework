@@ -1,8 +1,12 @@
 package com.training.springcore;
 
 import com.training.springcore.model.ApplicationInfo;
+import com.training.springcore.config.BigCorpApplicationConfig;
+import org.springframework.core.env.Environment;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.stream.Collectors;
 
 public class BigCorpApplication {
 
@@ -14,11 +18,15 @@ public class BigCorpApplication {
     public void run(){
         ApplicationContext context =
                 new AnnotationConfigApplicationContext(BigCorpApplicationConfig.class);
+
         ApplicationInfo applicationInfo = context.getBean(ApplicationInfo.class);
         System.out.println("==========================================================");
         System.out.println("Application [" + applicationInfo.getName() + "] - version : "
                 + applicationInfo.getVersion());
         System.out.println("plus d'informations sur " + applicationInfo.getWebSiteUrl());
+        System.out.println(applicationInfo.getEmails().stream().collect(Collectors.joining(", ")));
         System.out.println("==========================================================");
+
+
     }
 }
