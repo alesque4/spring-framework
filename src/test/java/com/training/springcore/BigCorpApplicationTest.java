@@ -17,6 +17,7 @@ public class BigCorpApplicationTest {
     @Test
     public void run() {
         application.run();
-        assertThat(output.toString(), containsString("Application startup"));
+        assertThat(output.toString(),
+                containsString("BigCorp application"));
     }
 }

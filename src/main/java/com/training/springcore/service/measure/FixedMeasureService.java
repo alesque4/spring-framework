@@ -3,6 +3,7 @@ package com.training.springcore.service.measure;
 import com.training.springcore.model.Captor;
 import com.training.springcore.model.Measure;
 import com.training.springcore.model.MeasureStep;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import java.util.List;
 @Lazy
 public class FixedMeasureService implements MeasureService {
 
+    @Value("${bigcorp.measure.default-fixed}")
+    private Integer defaultValue;
+
     @Override
     public List<Measure> readMeasures(Captor captor, Instant start, Instant end, MeasureStep step) {
         System.out.println("Appel de readMeasures : "+this);
@@ -25,7 +29,7 @@ public class FixedMeasureService implements MeasureService {
         checkReadMeasuresAgrs(captor, start, end, step);
 
         while(current.isBefore(end)){
-            measures.add(new Measure(current, 10_000_000, captor));
+            measures.add(new Measure(current, defaultValue, captor));
             current = current.plusSeconds(step.getDurationInSecondes());
         }
         return measures;
