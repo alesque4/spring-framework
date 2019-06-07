@@ -31,32 +31,14 @@ public class SiteServiceImplTest {
     @ComponentScan("com.training.spring.bigcorp.service")
     static class SiteServiceTestConfiguration{ }
 
+    @Mock
+    private CaptorService captorService;
+
     @Autowired
     private SiteServiceImpl siteService;
 
     @Rule
     public OutputCapture output = new OutputCapture();
-
-    @Test
-    public void readFileFromUrl(){
-        siteService.readFile("url:https://dev-mind.fr/lorem.txt");
-        Assertions.assertThat(output.toString()).contains("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
-    }
-
-    @Test
-    public void readFileFromClasspath(){
-        siteService.readFile("classpath:lorem.txt");
-        Assertions.assertThat(output.toString()).contains("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
-    }
-
-    @Test
-    public void readFileFromFileSystem(){
-        siteService.readFile("file:///C:/ProgramData/lorem.txt");
-        Assertions.assertThat(output.toString()).contains("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
-    }
-
-    @Mock
-    private CaptorService captorService;
 
     @Before
     public void init(){

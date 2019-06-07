@@ -1,6 +1,8 @@
 package com.training.spring.bigcorp.service;
 
 import com.training.spring.bigcorp.model.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
@@ -15,6 +17,8 @@ import java.util.Scanner;
 @Lazy
 public class SiteServiceImpl implements SiteService {
 
+    private final static Logger logger = LoggerFactory.getLogger(SiteService.class);
+
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -25,13 +29,13 @@ public class SiteServiceImpl implements SiteService {
 
     @Autowired
     public SiteServiceImpl(CaptorService captorService){
-        System.out.println("Init SiteServiceImpl :" + this);
+        logger.debug("Init SiteServiceImpl :" + this);
         this.captorService = captorService;
     }
 
     @Override
     public Site findById(String siteId) {
-        System.out.println("Appel de findById :" + this);
+        logger.debug("Appel de findById avec l'id : "+siteId);
 
         if (siteId == null) {
             return null;
@@ -50,11 +54,11 @@ public class SiteServiceImpl implements SiteService {
         try (InputStream stream = resource.getInputStream()) {
             Scanner scanner = new Scanner(stream).useDelimiter("\\n");
             while (scanner.hasNext()) {
-                System.out.println(scanner.next());
+                logger.debug(scanner.next());
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Erreur sur chargement fichier", e);
         }
 
     }
