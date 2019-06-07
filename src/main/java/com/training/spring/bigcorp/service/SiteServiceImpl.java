@@ -46,20 +46,4 @@ public class SiteServiceImpl implements SiteService {
         site.setCaptors(captorService.findBySite(siteId));
         return site;
     }
-
-    @Override
-    public void readFile(String path) {
-        Resource resource = resourceLoader.getResource(path);
-
-        try (InputStream stream = resource.getInputStream()) {
-            Scanner scanner = new Scanner(stream).useDelimiter("\\n");
-            while (scanner.hasNext()) {
-                logger.debug(scanner.next());
-            }
-        }
-        catch (IOException e) {
-            logger.error("Erreur sur chargement fichier", e);
-        }
-
-    }
 }
