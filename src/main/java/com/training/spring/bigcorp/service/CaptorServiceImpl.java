@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class CaptorServiceImpl implements CaptorService {
 
+    @Autowired
     private CaptorDao captorDao;
 
     private MeasureService measureService;

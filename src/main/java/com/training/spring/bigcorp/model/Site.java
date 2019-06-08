@@ -1,5 +1,6 @@
 package com.training.spring.bigcorp.model;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -27,10 +28,11 @@ public class Site {
 
     /**
      * Constructor to use with required property
-     * @param name
+     * @param name Nom du site
      */
     public Site(String name) {
         this.name = name;
+        captors = new HashSet<>();
     }
 
     public String getId() {
