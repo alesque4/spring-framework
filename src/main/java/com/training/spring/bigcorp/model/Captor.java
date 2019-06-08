@@ -7,7 +7,7 @@ public class Captor {
     /**
      * Captor id
      */
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     /**
      * Captor name
@@ -39,6 +39,7 @@ public class Captor {
         this.name = name;
         this.powerSource = powerSource;
         this.site = site;
+        this.id = UUID.randomUUID().toString();
     }
 
     public PowerSource getPowerSource() {return powerSource;}

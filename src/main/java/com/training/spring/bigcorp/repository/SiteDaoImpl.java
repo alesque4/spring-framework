@@ -30,8 +30,8 @@ public class SiteDaoImpl implements SiteDao {
     }
 
     private Site siteMapper(ResultSet rs, int rowNum) throws SQLException {
-        Site site = new Site(rs.getString("site_name"));
-        site.setId(rs.getString("site_id"));
+        Site site = new Site(rs.getString("name"));
+        site.setId(rs.getString("id"));
         return site;
     }
 
@@ -41,7 +41,7 @@ public class SiteDaoImpl implements SiteDao {
      */
     @Override
     public void create(Site element) {
-        jdbcTemplate.update("INSERT INTO SITE VALUES (':id', ':name')",
+        jdbcTemplate.update("INSERT INTO SITE VALUES (:id, :name)",
                 new MapSqlParameterSource()
                         .addValue("id", element.getId())
                         .addValue("name", element.getName()));
@@ -55,7 +55,9 @@ public class SiteDaoImpl implements SiteDao {
     @Override
     public Site findById(String id) {
         Site siteLookedFor;
-        List<Site> listSite = jdbcTemplate.query(SELECT + " WHERE id="+id, this::siteMapper);
+        List<Site> listSite = jdbcTemplate.query(SELECT + " WHERE id=:id",
+                new MapSqlParameterSource().addValue("id", id),
+                this::siteMapper);
         if(listSite.isEmpty()){
             siteLookedFor = null;
         }else{
