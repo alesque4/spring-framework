@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,64 +21,29 @@ import java.util.List;
 @Transactional
 public class MeasureDaoImpl implements MeasureDao {
 
-    @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Autowired
-    private H2DateConverter h2DateConverter;
-
-    private static String SELECT_WITH_JOIN = "SELECT m.id, m.instant, m.value_in_watt, m.captor_id,"
-            + " c.name as captor_name, c.site_id, s.name as site_name "
-            + "FROM Measure m inner join Captor c on m.captor_id=c.id inner join site s on c.site_id = s.id ";
-
-
-    private Measure measureMapper(ResultSet rs, int rowNum) throws SQLException {
-        Site site = new Site(rs.getString("site_name"));
-        site.setId(rs.getString("site_id"));
-
-        Captor captor = new Captor(rs.getString("captor_name"), PowerSource.FIXED, site);
-        captor.setId(rs.getString("captor_id"));
-
-        Measure measure = new Measure(h2DateConverter.convert(rs.getString("instant")),
-                rs.getInt("value_in_watt"),
-                captor);
-        measure.setId(rs.getLong("id"));
-        return measure;
-    }
+    private final static String SELECT_WITH_JOIN = "select m from Measure m inner join m.captor c";
 
     /**
-     * Ajoute une mesure dans la bdd
-     * @param element La mesure à ajouter
+     * Ajoute ou modifie une mesure dans la bdd
+     * @param measure La mesure à ajouter
      */
     @Override
-    public void create(Measure element) {
-        jdbcTemplate.update("INSERT INTO MEASURE (ID, INSTANT, VALUE_IN_WATT, CAPTOR_ID) "+
-                        "VALUES (:id, :instant, :valueInWatt, :captor_id)",
-                new MapSqlParameterSource()
-                        .addValue("id", element.getId())
-                        .addValue("instant", element.getInstant())
-                        .addValue("valueInWatt", element.getValueInWatt())
-                        .addValue("captor_id", element.getCaptor().getId()));
+    public void persist(Measure measure) {
+        entityManager.persist(measure);
     }
 
     /**
      * Cherche une mesure par son id
      *
-     * @param aLong L'id recherché
+     * @param id L'id recherché
      * @return La mesure ou null si elle n'est pas trouvée
      */
     @Override
-    public Measure findById(Long aLong) {
-        Measure measureLookedFor;
-        List<Measure> listMeasure = jdbcTemplate.query(SELECT_WITH_JOIN + " where m.id=:id",
-                new MapSqlParameterSource("id", aLong),
-                this::measureMapper);
-        if (listMeasure.isEmpty()) {
-            measureLookedFor = null;
-        } else {
-            measureLookedFor = listMeasure.get(0);
-        }
-        return measureLookedFor;
+    public Measure findById(Long id) {
+        return entityManager.find(Measure.class, id);
     }
 
     /**
@@ -86,32 +53,16 @@ public class MeasureDaoImpl implements MeasureDao {
      */
     @Override
     public List<Measure> findAll() {
-        return jdbcTemplate.query(SELECT_WITH_JOIN, this::measureMapper);
-    }
-
-    /**
-     * Mets à jour une mesure
-     *
-     * @param element La mesure à mettre à jour
-     */
-    @Override
-    public void update(Measure element) {
-        jdbcTemplate.update("update MEASURE "
-                        + "set instant=:instant, value_in_watt=:value_in_watt, captor_id=:captor_id",
-                new MapSqlParameterSource()
-                        .addValue("instant", element.getInstant())
-                        .addValue("value_in_watt", element.getValueInWatt())
-                        .addValue("captor_id", element.getCaptor().getId()));
+        return entityManager.createQuery(SELECT_WITH_JOIN, Measure.class).getResultList();
     }
 
     /**
      * Supprime une mesure
      *
-     * @param aLong L'id de la mesure à supprimer
+     * @param measure L'id de la mesure à supprimer
      */
     @Override
-    public void deleteById(Long aLong) {
-        jdbcTemplate.update("delete from MEASURE where id=:id",
-                new MapSqlParameterSource().addValue("id", aLong));
+    public void delete(Measure measure) {
+        entityManager.remove(measure);
     }
 }

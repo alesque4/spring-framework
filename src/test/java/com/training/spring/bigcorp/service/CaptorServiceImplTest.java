@@ -50,7 +50,9 @@ public class CaptorServiceImplTest {
         // Initialisation
         String siteId = "siteId";
         List<Captor> mockAnswer = new ArrayList<Captor>();
-        mockAnswer.add(new Captor("Capteur A", PowerSource.FIXED, new Site("SiteTest")));
+        Captor captor = new Captor("Capteur A", new Site("SiteTest"));
+        captor.setPowerSource(PowerSource.FIXED);
+        mockAnswer.add(captor);
         Mockito.when(captorDao.findBySiteId(siteId)).thenReturn(mockAnswer);
 
         // Appel du SUT

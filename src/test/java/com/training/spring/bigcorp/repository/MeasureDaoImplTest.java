@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,76 +22,61 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
-@JdbcTest
-@ContextConfiguration(classes = {DaoTestConfig.class})
+@DataJpaTest
+@ComponentScan
 public class MeasureDaoImplTest {
 
 
     @Autowired
     private MeasureDao measureDao;
 
-    private Site site;
-    private Captor captor;
-
-    @Before
-    public void init() {
-        site = new Site("site1");
-        captor = new Captor("cTest", PowerSource.FIXED, site);
-        captor.setId("c1");
-    }
-
     @Test
     public void findById() {
-        Measure measure = measureDao.findById(1L);
-        Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000L);
+        Measure measure = measureDao.findById(-1L);
+        Assertions.assertThat(measure.getId()).isEqualTo(-1L);
+        Assertions.assertThat(measure.getInstant()).isEqualTo(Instant.parse("2018-08-09T11:00:00.000Z"));
+        Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
+        Assertions.assertThat(measure.getCaptor().getName()).isEqualTo("Eolienne");
+        Assertions.assertThat(measure.getCaptor().getSite().getName()).isEqualTo("Bigcorp Lyon");
     }
 
     @Test
     public void findByIdShouldReturnNullWhenIdUnknown() {
-        Measure measure = measureDao.findById(Long.MAX_VALUE);
+        Measure measure = measureDao.findById(-1000L);
         Assertions.assertThat(measure).isNull();
     }
 
     @Test
     public void findAll() {
         List<Measure> measures = measureDao.findAll();
-        Assertions.assertThat(measures).hasSize(10).extracting("id", "valueInWatt")
-                .contains(Tuple.tuple(1L, 1000000))
-                .contains(Tuple.tuple(2L, 1000124))
-                .contains(Tuple.tuple(3L, 1001234))
-                .contains(Tuple.tuple(6L, -9000000))
-                .contains(Tuple.tuple(10L, -909678));
+        Assertions.assertThat(measures).hasSize(10);
     }
 
     @Test
     public void create() {
+        Captor captor = new Captor("Eolienne", new Site("site"));
+        captor.setId("c1");
+        captor.setPowerSource(PowerSource.FIXED);
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
-        measureDao.create(new Measure(Instant.now(), 1234, captor));
-        Assertions.assertThat(measureDao.findAll()).hasSize(11).extracting(Measure::getValueInWatt)
-                .contains(1234, 1000000);
+        measureDao.persist(new Measure(Instant.now(), 2_333_666, captor));
+        Assertions.assertThat(measureDao.findAll()).hasSize(11);
     }
 
     @Test
     public void update() {
-        Measure measure = measureDao.findById(1L);
+        Measure measure = measureDao.findById(-1L);
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
-        measure.setValueInWatt(1234);
-        measureDao.update(measure);
-        measure = measureDao.findById(1L);
-        Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1234);
+        measure.setValueInWatt(2_333_666);
+        measureDao.persist(measure);
+        measure = measureDao.findById(-1L);
+        Assertions.assertThat(measure.getValueInWatt()).isEqualTo(2_333_666);
     }
 
     @Test
-    public void deleteById() {
-        Measure measure = new Measure(Instant.now(), 1234, captor);
-        measureDao.create(measure);
-        List<Measure> measures = measureDao.findAll();
-        Measure measureRead = measures.stream()
-                .filter(m -> m.getValueInWatt() == 1234)
-                .reduce((a,b) -> {throw new IllegalStateException("Should only have 1 element");})
-                .get();
-        Assertions.assertThat(measureRead.getId()).isNotNull();
-        measureDao.deleteById(measureRead.getId());
-        Assertions.assertThat(measureDao.findById(measureRead.getId())).isNull();
+    public void delete() {
+        Assertions.assertThat(measureDao.findAll()).hasSize(10);
+        measureDao.delete(measureDao.findById(-1L));
+        Assertions.assertThat(measureDao.findAll()).hasSize(9);
     }
 }
+

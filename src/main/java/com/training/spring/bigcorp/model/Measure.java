@@ -1,28 +1,41 @@
 package com.training.spring.bigcorp.model;
 
+import javax.persistence.*;
 import java.time.Instant;
 
+@Entity
+@Table(name = "MEASURE")
 public class Measure {
 
     /**
      * id
      */
+    @Id
+    @GeneratedValue
     private long id;
 
     /**
      * instant de la mesure
      */
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
     private Instant instant;
 
     /**
      * Valeur de la mesure (W)
      */
+    @Column(name= "VALUE_IN_WATT", nullable = false)
     private Integer valueInWatt;
 
     /**
      * Capteur qui a fait la mesure
      */
+    @ManyToOne
     private Captor captor;
+
+    @Deprecated
+    public Measure(){
+
+    }
 
     public Measure(Instant instant, Integer valueInWatt, Captor captor) {
         this.instant = instant;
