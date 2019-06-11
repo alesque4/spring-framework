@@ -2,6 +2,7 @@ package com.training.spring.bigcorp.service;
 
 import com.training.spring.bigcorp.model.Captor;
 import com.training.spring.bigcorp.model.PowerSource;
+import com.training.spring.bigcorp.model.RealCaptor;
 import com.training.spring.bigcorp.model.Site;
 import com.training.spring.bigcorp.repository.CaptorDao;
 import com.training.spring.bigcorp.service.measure.FixedMeasureService;
@@ -50,8 +51,7 @@ public class CaptorServiceImplTest {
         // Initialisation
         String siteId = "siteId";
         List<Captor> mockAnswer = new ArrayList<Captor>();
-        Captor captor = new Captor("Capteur A", new Site("SiteTest"));
-        captor.setPowerSource(PowerSource.FIXED);
+        Captor captor = new RealCaptor("Capteur A", new Site("SiteTest"));
         mockAnswer.add(captor);
         Mockito.when(captorDao.findBySiteId(siteId)).thenReturn(mockAnswer);
 

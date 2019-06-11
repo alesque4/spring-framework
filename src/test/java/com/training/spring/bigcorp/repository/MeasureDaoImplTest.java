@@ -1,9 +1,6 @@
 package com.training.spring.bigcorp.repository;
 
-import com.training.spring.bigcorp.model.Captor;
-import com.training.spring.bigcorp.model.Measure;
-import com.training.spring.bigcorp.model.PowerSource;
-import com.training.spring.bigcorp.model.Site;
+import com.training.spring.bigcorp.model.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
 import org.hibernate.exception.ConstraintViolationException;
@@ -59,9 +56,8 @@ public class MeasureDaoImplTest {
 
     @Test
     public void create() {
-        Captor captor = new Captor("Eolienne", new Site("site"));
+        Captor captor = new RealCaptor("Eolienne", new Site("site"));
         captor.setId("c1");
-        captor.setPowerSource(PowerSource.FIXED);
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
         measureDao.save(new Measure(Instant.now(), 2_333_666, captor));
         Assertions.assertThat(measureDao.findAll()).hasSize(11);

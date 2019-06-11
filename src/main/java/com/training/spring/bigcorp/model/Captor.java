@@ -5,13 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "CAPTOR")
-public class Captor {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+abstract public class Captor {
     /**
      * Captor id
      */
     @Id
-    private String id = UUID.randomUUID().toString();;
+    private String id = UUID.randomUUID().toString();
 
     /**
      * Captor name
@@ -20,23 +20,10 @@ public class Captor {
     private String name;
 
     /**
-     * Captor power source
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name="POWER_SOURCE", nullable = false)
-    private PowerSource powerSource;
-
-    /**
      * Captor site
      */
     @ManyToOne
     private Site site;
-
-    /**
-     * Valeur par défaut (W)
-     */
-    @Column(name = "DEFAULT_POWER_IN_WATT")
-    private Integer defaultValueInWatt;
 
     @Deprecated
     public Captor() {
@@ -58,8 +45,7 @@ public class Captor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Captor captor = (Captor) o;
-        return Objects.equals(name, captor.name) &&
-                powerSource == captor.powerSource;
+        return Objects.equals(name, captor.name);
     }
 
     @Override
@@ -74,10 +60,6 @@ public class Captor {
                 ", name='" + name + '\'' +
                 '}';
     }
-
-    public PowerSource getPowerSource() {return powerSource;}
-
-    public void setPowerSource(PowerSource powerSource) {this.powerSource = powerSource;}
 
     public Site getSite() {return site;}
 

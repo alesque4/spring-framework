@@ -30,11 +30,13 @@ public class FixedMeasureServiceTest {
     /**
      * Captor used in tests
      */
-    private Captor captor = new Captor("test", new Site("SiteTest"));
+    private Captor captor = new FixedCaptor("test", new Site("SiteTest"));
+
     /**
      * Start instant used in tests
      */
     Instant start = Instant.parse("2018-09-01T22:00:00Z");
+
     /**
      * End instant used in tests. We define a one day period
      */
