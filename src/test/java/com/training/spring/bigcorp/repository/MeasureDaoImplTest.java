@@ -6,20 +6,19 @@ import com.training.spring.bigcorp.model.PowerSource;
 import com.training.spring.bigcorp.model.Site;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
-import org.junit.Before;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -30,9 +29,15 @@ public class MeasureDaoImplTest {
     @Autowired
     private MeasureDao measureDao;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     public void findById() {
-        Measure measure = measureDao.findById(-1L);
+        Optional<Measure> optionalMeasure = measureDao.findById(-1L);
+        Assertions.assertThat(optionalMeasure).isNotEmpty();
+        Measure measure = optionalMeasure.get();
+
         Assertions.assertThat(measure.getId()).isEqualTo(-1L);
         Assertions.assertThat(measure.getInstant()).isEqualTo(Instant.parse("2018-08-09T11:00:00.000Z"));
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
@@ -42,8 +47,8 @@ public class MeasureDaoImplTest {
 
     @Test
     public void findByIdShouldReturnNullWhenIdUnknown() {
-        Measure measure = measureDao.findById(-1000L);
-        Assertions.assertThat(measure).isNull();
+        Optional<Measure> measure = measureDao.findById(-1000L);
+        Assertions.assertThat(measure).isEmpty();
     }
 
     @Test
@@ -58,24 +63,27 @@ public class MeasureDaoImplTest {
         captor.setId("c1");
         captor.setPowerSource(PowerSource.FIXED);
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
-        measureDao.persist(new Measure(Instant.now(), 2_333_666, captor));
+        measureDao.save(new Measure(Instant.now(), 2_333_666, captor));
         Assertions.assertThat(measureDao.findAll()).hasSize(11);
     }
 
     @Test
     public void update() {
-        Measure measure = measureDao.findById(-1L);
+        Optional<Measure> optionalMeasure = measureDao.findById(-1L);
+        Assertions.assertThat(optionalMeasure).isNotEmpty();
+        Measure measure = optionalMeasure.get();
+
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
         measure.setValueInWatt(2_333_666);
-        measureDao.persist(measure);
-        measure = measureDao.findById(-1L);
+        measureDao.save(measure);
+        measure = measureDao.findById(-1L).get();
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(2_333_666);
     }
 
     @Test
-    public void delete() {
+    public void deleteById() {
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
-        measureDao.delete(measureDao.findById(-1L));
+        measureDao.delete(measureDao.findById(-1L).get());
         Assertions.assertThat(measureDao.findAll()).hasSize(9);
     }
 }
