@@ -125,6 +125,7 @@ public class CaptorDaoImplTest {
                 .containsExactly(Tuple.tuple("c1", "Eolienne"));
     }
 
+        //Test d'accès concurenciel
     @Test
     public void preventConcurrentWrite() {
         Captor captor = captorDao.getOne("c1");
@@ -147,5 +148,41 @@ public class CaptorDaoImplTest {
         // à 0 je dois avoir une exception
         Assertions.assertThatThrownBy(() -> captorDao.save(captor))
                 .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
+    }
+
+        //Tests de validation
+    @Test
+    public void createShouldThrowExceptionWhenNameIsNull() {
+        Assertions
+                .assertThatThrownBy(() -> {
+                    captorDao.save(new RealCaptor(null, null));
+                    entityManager.flush();
+                })
+                .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
+                .hasMessageContaining("ne peut pas être nul");
+    }
+
+    @Test
+    public void createShouldThrowExceptionWhenNameSizeIsInvalid() {
+        Assertions
+                .assertThatThrownBy(() -> {
+                    captorDao.save(new RealCaptor("ee", null));
+                    entityManager.flush();
+                })
+                .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
+                .hasMessageContaining("la taille doit être comprise entre 3 et 100");
+    }
+
+    @Test
+    public void createSimulatedCaptorShouldThrowExceptionWhenMinMaxAreInvalid() {
+        Site site = new Site("Florange");
+        site.setId("site1");
+        Assertions
+                .assertThatThrownBy(() -> {
+                    captorDao.save(new SimulatedCaptor("Mon site", site, 10, 5));
+                    entityManager.flush();
+                })
+                .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
+                .hasMessageContaining("minPowerInWatt should be less than maxPowerInWatt");
     }
 }

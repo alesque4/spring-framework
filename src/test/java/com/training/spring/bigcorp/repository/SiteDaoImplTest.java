@@ -97,6 +97,7 @@ public class SiteDaoImplTest {
                 .hasCauseExactlyInstanceOf(ConstraintViolationException.class);
     }
 
+        //Test d'accès concurenciel
     @Test
     public void preventConcurrentWrite() {
         Site site = siteDao.getOne("site1");
@@ -119,6 +120,28 @@ public class SiteDaoImplTest {
         // à 0 je dois avoir une exception
         Assertions.assertThatThrownBy(() -> siteDao.save(site))
                 .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
+    }
+
+        //Tests de validation
+    @Test
+    public void createShouldThrowExceptionWhenNameIsNull() {
+        Assertions
+                .assertThatThrownBy(() -> {
+                    siteDao.save(new Site(null));
+                    entityManager.flush();
+                })
+                .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
+                .hasMessageContaining("ne peut pas être nul");
+    }
+    @Test
+    public void createShouldThrowExceptionWhenNameSizeIsInvalid() {
+        Assertions
+                .assertThatThrownBy(() -> {
+                    siteDao.save(new Site("ee"));
+                    entityManager.flush();
+                })
+                .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
+                .hasMessageContaining("la taille doit être comprise entre 3 et 100");
     }
 }
 

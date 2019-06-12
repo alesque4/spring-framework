@@ -1,6 +1,8 @@
 package com.training.spring.bigcorp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.Instant;
 
 @Entity
@@ -18,12 +20,15 @@ public class Measure {
      * instant de la mesure
      */
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
+    @NotNull
+    @Past
     private Instant instant;
 
     /**
      * Valeur de la mesure (W)
      */
-    @Column(name= "VALUE_IN_WATT", nullable = false)
+    @Column(name= "VALUE_IN_WATT")
+    @NotNull
     private Integer valueInWatt;
 
     /**

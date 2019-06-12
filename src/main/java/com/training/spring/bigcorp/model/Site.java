@@ -1,6 +1,8 @@
 package com.training.spring.bigcorp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +20,8 @@ public class Site {
     /**
      * Site name
      */
-    @Column(nullable = false, name = "name")
+    @NotNull
+    @Size(min = 3, max = 100)
     private String name;
 
     /**
