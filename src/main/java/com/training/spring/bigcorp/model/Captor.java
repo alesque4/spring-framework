@@ -25,6 +25,12 @@ abstract public class Captor {
     @ManyToOne
     private Site site;
 
+    /**
+     * Version
+     */
+    @Version
+    private int version;
+
     @Deprecated
     public Captor() {
         // Use for serializer or deserializer
@@ -79,5 +85,13 @@ abstract public class Captor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

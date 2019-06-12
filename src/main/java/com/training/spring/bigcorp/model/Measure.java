@@ -32,6 +32,12 @@ public class Measure {
     @ManyToOne
     private Captor captor;
 
+    /**
+     * Version
+     */
+    @Version
+    private int version;
+
     @Deprecated
     public Measure(){
 
@@ -98,5 +104,13 @@ public class Measure {
 
     public void setCaptor(Captor captor) {
         this.captor = captor;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

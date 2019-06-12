@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -36,6 +37,7 @@ public class MeasureDaoImplTest {
         Measure measure = optionalMeasure.get();
 
         Assertions.assertThat(measure.getId()).isEqualTo(-1L);
+        Assertions.assertThat(measure.getVersion()).isEqualTo(0);
         Assertions.assertThat(measure.getInstant()).isEqualTo(Instant.parse("2018-08-09T11:00:00.000Z"));
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
         Assertions.assertThat(measure.getCaptor().getName()).isEqualTo("Eolienne");
@@ -58,6 +60,7 @@ public class MeasureDaoImplTest {
     public void create() {
         Captor captor = new RealCaptor("Eolienne", new Site("site"));
         captor.setId("c1");
+        captor.setVersion(1);
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
         measureDao.save(new Measure(Instant.now(), 2_333_666, captor));
         Assertions.assertThat(measureDao.findAll()).hasSize(11);
@@ -70,10 +73,13 @@ public class MeasureDaoImplTest {
         Measure measure = optionalMeasure.get();
 
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
+        Assertions.assertThat(measure.getVersion()).isEqualTo(0);
         measure.setValueInWatt(2_333_666);
+        measure.setVersion(1);
         measureDao.save(measure);
         measure = measureDao.findById(-1L).get();
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(2_333_666);
+        Assertions.assertThat(measure.getVersion()).isEqualTo(1);
     }
 
     @Test
@@ -81,6 +87,31 @@ public class MeasureDaoImplTest {
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
         measureDao.delete(measureDao.findById(-1L).get());
         Assertions.assertThat(measureDao.findAll()).hasSize(9);
+    }
+
+    @Test
+    public void preventConcurrentWrite() {
+        Measure measure = measureDao.getOne(-1L);
+
+        // A la base le numéro de version est à sa valeur initiale
+        Assertions.assertThat(measure.getVersion()).isEqualTo(0);
+
+        // On detache cet objet du contexte de persistence
+        entityManager.detach(measure);
+        Instant now = Instant.now();
+        measure.setInstant(now);
+
+        // On force la mise à jour en base (via le flush) et on vérifie que l'objet retourné
+        // est attaché à la session a été mis à jour
+        Measure attachedMeasure = measureDao.save(measure);
+        entityManager.flush();
+        Assertions.assertThat(attachedMeasure.getInstant()).isEqualTo(now);
+        Assertions.assertThat(attachedMeasure.getVersion()).isEqualTo(1);
+
+        // Si maintenant je réessaie d'enregistrer captor, comme le numéro de version est
+        // à 0 je dois avoir une exception
+        Assertions.assertThatThrownBy(() -> measureDao.save(measure))
+                .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
 }
 
