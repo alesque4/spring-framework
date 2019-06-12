@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootContextLoader;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
@@ -30,6 +32,12 @@ public class CaptorDaoImplTest {
 
     @Autowired
     private CaptorDao captorDao;
+
+    @Autowired
+    private MeasureDao measureDao;
+
+    @Autowired
+    private SiteDao siteDao;
 
     @Autowired
     private EntityManager entityManager;
@@ -110,6 +118,15 @@ public class CaptorDaoImplTest {
     }
 
     @Test
+    public void deleteBySiteId() {
+        Assertions.assertThat(captorDao.findBySiteId("site1")).hasSize(2);
+        measureDao.deleteAll();
+        captorDao.deleteBySiteId("site1");
+        siteDao.delete(siteDao.findById("site1").orElseThrow( () -> new RuntimeException("site1 should exist")));
+        Assertions.assertThat(captorDao.findBySiteId("site1")).isEmpty();
+    }
+
+    @Test
     public void findByExample() {
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnorePaths("id", "powerSource", "defaultValueInWatt", "site.name", "captors")
@@ -117,7 +134,7 @@ public class CaptorDaoImplTest {
                 .withMatcher("site.name", match -> match.ignoreCase().contains());
         Site site = new Site("Florange");
         site.setId("site1");
-        Captor exampleProbe = new FixedCaptor("lienn", site);
+        Captor exampleProbe = new FixedCaptor("lienn", site, 10_000);
         List<Captor> captors = captorDao.findAll(Example.of(exampleProbe, matcher));
         Assertions.assertThat(captors)
                 .hasSize(1)

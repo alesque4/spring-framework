@@ -15,7 +15,7 @@ public class Site {
      * Site id
      */
     @Id
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     /**
      * Site name
@@ -36,7 +36,11 @@ public class Site {
     @Version
     private int version;
 
-    @Deprecated
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID().toString();
+    }
+
     public Site() {
         // Use for serializer or deserializer
     }
