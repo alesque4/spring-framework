@@ -36,9 +36,10 @@ public class Site {
     @Version
     private int version;
 
+    //On enlève les - car ils font buguer les templates mustache
     @PrePersist
     public void generateId() {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString().replace("-","");
     }
 
     public Site() {

@@ -41,9 +41,10 @@ abstract public class Captor {
     @NotNull
     private PowerSource powerSource;
 
+    //On enlève les - car ils font buguer les templates mustache
     @PrePersist
     public void generateId() {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString().replace("-","");
     }
 
     public Captor() {
