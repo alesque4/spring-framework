@@ -129,9 +129,9 @@ public class CaptorDaoImplTest {
     @Test
     public void findByExample() {
         ExampleMatcher matcher = ExampleMatcher.matching()
-                .withIgnorePaths("id", "powerSource", "defaultValueInWatt", "site.name", "captors")
+                .withIgnorePaths("id", "powerSource", "defaultPowerInWatt", "site.name", "site.captors")
                 .withMatcher("name", match -> match.ignoreCase().contains())
-                .withMatcher("site.name", match -> match.ignoreCase().contains());
+                .withMatcher("site.id", match -> match.ignoreCase().contains());
         Site site = new Site("Florange");
         site.setId("site1");
         Captor exampleProbe = new FixedCaptor("lienn", site, 10_000);
