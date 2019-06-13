@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Capteurs BigCorp</title>
+    {{> partial-import}}
+</head>
+<body>
+{{> partial-header}}
+<div class="container">
+    <h1>Liste des capteurs</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#captors}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{powerSource}}</td>
+                <td><a class="btn btn-primary" href="/sites/{{siteId}}/captors/{{id}}"
+                       role="button">Editer</a></td>
+            </tr>
+        {{/captors}}
+        </tbody>
+    </table>
+</div>
+{{> partial-footer}}
+</body>
+</html>

@@ -36,7 +36,7 @@ public class SiteController {
 
     @GetMapping("/{id}")
     public ModelAndView findById(@PathVariable String id) {
-        return new ModelAndView("sitecreate")
+        return new ModelAndView("site")
                 .addObject("site",
                         siteDao.findById(id).orElseThrow(IllegalArgumentException::new));
     }
@@ -44,7 +44,7 @@ public class SiteController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("site", new Site());
-        return "sitecreate";
+        return "site";
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
