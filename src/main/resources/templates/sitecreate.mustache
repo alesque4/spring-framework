@@ -42,7 +42,7 @@
                                 <td>{{name}}</td>
                                 <td>{{powerSource}}</td>
                                 <td><a class="btn btn-primary"
-                                       href="/sites/{{site.id}}/captors/{{id}}" role="button">Editer</a></td>
+                                       href="/sites/{{site.id}}/captors/{{powerSource}}/{{id}}" role="button">Editer</a></td>
                             </tr>
                         {{/site.captors}}
                         </tbody>
@@ -73,7 +73,7 @@
                 </div>
                 <div class="modal-footer">
                     <form action="/sites/{{site.id}}/delete" method="post">
-                        <button type="button" class="btn btn-secondary" datadismiss="modal">Close
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
                         </button>
                         <button type="submit" class="btn btn-danger">Supprimer</button>
                     </form>

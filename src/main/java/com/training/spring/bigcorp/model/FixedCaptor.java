@@ -13,7 +13,7 @@ public class FixedCaptor extends Captor {
     @NotNull
     private Integer defaultPowerInWatt;
 
-
+    @Deprecated
     public FixedCaptor() {
         super();
         // used only by serializer and deserializer
