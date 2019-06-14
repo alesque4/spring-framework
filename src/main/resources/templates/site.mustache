@@ -9,6 +9,9 @@
     {{#site.id}}<h1>Modification site</h1>{{/site.id}}
     {{^site.id}}<h1>Création site</h1>{{/site.id}}
     <form action="/sites" method="post">
+        <!-- token csrf ajouté par spring security -->
+        <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}">
+
         <div class="form-group">
             <label for="name">Nom</label>
             <input type="text" class="form-control" id="name" name="name" required
@@ -48,12 +51,14 @@
                 </fieldset>
             </div>
         {{/site.id}}
-        <a class="btn btn-secondary" href="/sites">Annuler</a>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        {{#site.id}}
-            <button type="button" class="btn btn-danger" data-toggle="modal"
-                    data-target="#deleteModal">Supprimer
-            </button>{{/site.id}}
+        <div class = "form-group">
+            <a class="btn btn-secondary" href="/sites">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            {{#site.id}}
+                <button type="button" class="btn btn-danger" data-toggle="modal"
+                        data-target="#deleteModal">Supprimer
+                </button>{{/site.id}}
+        </div>
     </form>
 </div>
 {{#site.id}}
@@ -71,6 +76,8 @@
                 </div>
                 <div class="modal-footer">
                     <form action="/sites/{{site.id}}/delete" method="post">
+                        <!-- token csrf ajouté par spring security -->
+                        <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
                         </button>
                         <button type="submit" class="btn btn-danger">Supprimer</button>

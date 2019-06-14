@@ -1,9 +1,10 @@
 package com.training.spring.bigcorp.repository;
 
-import com.training.spring.bigcorp.model.*;
+import com.training.spring.bigcorp.model.Captor;
+import com.training.spring.bigcorp.model.Measure;
+import com.training.spring.bigcorp.model.RealCaptor;
+import com.training.spring.bigcorp.model.Site;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.groups.Tuple;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

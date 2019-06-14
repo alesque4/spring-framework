@@ -8,6 +8,8 @@ import com.training.spring.bigcorp.repository.MeasureDao;
 import com.training.spring.bigcorp.repository.SiteDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,6 +74,7 @@ public class CaptorController {
         return new ModelAndView("captor").addObject("captor", toDto(captor));
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/create")
     public ModelAndView create(@PathVariable String siteId) {
         Site site =
@@ -81,6 +84,7 @@ public class CaptorController {
                         new CaptorDto(site, new FixedCaptor(null, site, null)));
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ModelAndView save(CaptorDto captorDto) {
         Site site = siteDao.findById(captorDto.getSiteId()).orElseThrow(NotFoundException::new);
@@ -90,6 +94,7 @@ public class CaptorController {
                 .addObject("captors", toDtos(captorDao.findBySiteId(captorDto.getSiteId())));
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/{id}/delete")
     public ModelAndView delete(@PathVariable String siteId, @PathVariable String id) {
         measureDao.deleteByCaptorId(id);

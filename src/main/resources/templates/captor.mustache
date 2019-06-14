@@ -26,6 +26,9 @@ $('.simulated-captor').hide();
     {{#captor.id}}<h1>Modification capteur</h1>{{/captor.id}}
     {{^captor.id}}<h1>Création capteur</h1>{{/captor.id}}
     <form action="/sites/{{captor.siteId}}/captors/" method="post">
+        <!-- token csrf ajouté par spring security -->
+        <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}">
+
         {{#captor.id}}<input type="hidden" class="form-control" name="id"
                              value="{{captor.id}}">{{/captor.id}}
         <div class="form-group">
@@ -88,13 +91,14 @@ $('.simulated-captor').hide();
             <small id="maxHelp" class="form-text text-muted">La puissance du capteur
                 sera simulée et sa valeur sera toujous inférieure à cette valeur maximale
             </small>
+            <a class="btn btn-secondary" href="/sites/{{captor.siteId}}">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            {{#captor.id}}
+                <button type="button" class="btn btn-danger" data-toggle="modal"
+                        data-target="#deleteModal">Supprimer
+                </button>
+            {{/captor.id}}
         </div>
-        <a class="btn btn-secondary" href="/sites/{{captor.siteId}}">Annuler</a>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        {{#captor.id}}
-            <button type="button" class="btn btn-danger" data-toggle="modal"
-                    data-target="#deleteModal">Supprimer
-            </button>{{/captor.id}}
     </form>
 </div>
 {{#captor.id}}
@@ -112,8 +116,10 @@ $('.simulated-captor').hide();
                         <b>{{captor.name}}</b> ?</p>
                 </div>
                 <div class="modal-footer">
-                    <form action="/sites/{{captor.siteId}}/captors/{{captor.id}}/delete"
-                          method="post">
+                    <form action="/sites/{{captor.siteId}}/captors/{{captor.id}}/delete" method="post">
+                        <!-- token csrf ajouté par spring security -->
+                        <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}">
+
                         <button type="button" class="btn btn-secondary" datadismiss="modal">Close
                         </button>
                         <button type="submit" class="btn btn-danger">Supprimer</button>
