@@ -6,7 +6,12 @@
 <body>
 {{> partial-header}}
 <div class="container">
-    <h1>Liste des capteurs</h1>
+    <h1>Liste des capteurs{{#captors.0.siteName}} du site {{captors.0.siteName}}{{/captors.0.siteName}}</h1>
+    {{#captors.0.siteId}}
+    <div class = "form-group">
+        <a class="btn btn-primary" href="/sites/{{captors.0.siteId}}/captors/create">Nouveau capteur</a>
+    </div>
+    {{/captors.0.siteId}}
     <table class="table">
         <thead>
         <tr>
